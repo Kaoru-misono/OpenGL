@@ -27,7 +27,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Shader.h">
+    <ClInclude Include="src\Renderer\shader.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
@@ -1275,13 +1275,17 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\buffer.h" />
+    <ClInclude Include="src\Renderer\vertex-array.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Shader.cpp">
+    <ClCompile Include="src\Renderer\shader.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\buffer.cpp" />
+    <ClCompile Include="src\Renderer\vertex-array.cpp" />
   </ItemGroup>
 </Project>

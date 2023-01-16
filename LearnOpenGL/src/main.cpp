@@ -4,7 +4,9 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "Shader.h"
+#include "Renderer/shader.h"
+#include "Renderer/buffer.h"
+#include "Renderer/vertex-array.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -56,16 +58,6 @@ int main()
 	}
 	//------------------------------------------------------------------------------
 
-	//What do we need to draw an object on screen?
-	//Vertex Array, Vertex Buffer, Index Buffer and shader
-	unsigned int VertexArray, VertexBuffer, IndexBuffer;
-
-	glGenVertexArrays(1, &VertexArray);
-	glBindVertexArray(VertexArray);
-
-	glGenBuffers(1, &VertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
-
 	//Create an array of vertices
 	float vertices[3 * 6] =
 	{
@@ -75,7 +67,7 @@ int main()
 		 0.0f,  0.5f, 0.0f,	0.0f, 0.0f, 1.0f
 	};
 	//array of vertices has Two Triangles 
-	float verticesOfTwoTriangle[6 * 3] =
+	float vertices_of_two_triangles[6 * 3] =
 	{
 		-0.9f, -0.5f, 0.0f,
 		 0.0f, -0.5f, 0.0f,
@@ -86,30 +78,34 @@ int main()
 	};
 
 	//Array of indices
-	unsigned int indices[6] = 
+	unsigned int indices[3] = 
 	{ 
-		0, 1, 2, 
-		2, 3, 1
+		0, 1, 2
 	};
 
-	//Specify the contents of the Vertex buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	Buffer_Layout layout = {
+		{Shader_Data_Type::Float3, "a_Position"},
+		{Shader_Data_Type::Float3, "a_Color"}
+	};
 
-	//Allows vertex shaders to read GPU (server-side) data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	//What do we need to draw an object on screen?
+	//Vertex Array, Vertex Buffer, Index Buffer and shader
 	
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+
+	std::shared_ptr<Vertex_Array> vertex_array = std::make_shared<Vertex_Array>();
+
+	std::shared_ptr<Vertex_Buffer> vertex_buffer = std::make_shared<Vertex_Buffer>(vertices, sizeof(vertices));
+	vertex_buffer->set_layout(layout);
+
+	std::shared_ptr< Index_Buffer> index_buffer = std::make_shared<Index_Buffer>(indices, sizeof(indices)/sizeof(uint32_t));
+
+	vertex_array->add_vertex_buffer(vertex_buffer);
+	vertex_array->set_index_buffer(index_buffer);
 
 
-
-	glGenBuffers(1, &IndexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//Shader
-	Shader TriangleShader("Asset/Shader/Triangle_VertexShader.glsl", "Asset/Shader/Triangle_FragmentShader.glsl");
+	Shader triangle_shader("Asset/Shader/triangle-vertex-shader.glsl", "Asset/Shader/triangle-fragment-shader.glsl");
 
 
 	// uncomment this call to draw in wireframe polygons.
@@ -127,29 +123,29 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		//ShaderProgram Use
-		TriangleShader.Bind();
+		triangle_shader.bind();
 
 		//Set Uniform
-		float timeValue = (float)glfwGetTime();
-		float colorValue = (sin(timeValue) / 2.f) + 0.5f;
-		glm::vec4 color(0.0f, colorValue, 0.0f, 1.0f);
-		TriangleShader.SetFloat4("u_Color", color);
-		//TriangleShader.SetFloat("u_Offset", 0.5f);
+		float time_value = (float)glfwGetTime();
+		float color_value = (sin(time_value) / 2.f) + 0.5f;
+		glm::vec4 color(0.0f, color_value, 0.0f, 1.0f);
+		triangle_shader.set_float4("u_Color", color);
+		//triangle_shader.set_float("u_Offset", 0.5f);
 		
 
-		glBindVertexArray(VertexArray);
+		vertex_array->bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		//glfw: swap buffersand poll IO events(keys pressed / released, mouse moved etc.)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VertexArray);
-	glDeleteBuffers(1, &VertexBuffer);
-	glDeleteBuffers(1, &IndexBuffer);
-	TriangleShader.UnBind();
+	vertex_array->unbind();
+	vertex_buffer->unbind();
+	index_buffer->unbind();
+	triangle_shader.unbind();
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
    // ------------------------------------------------------------------
