@@ -131,7 +131,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Renderer\buffer.h" />
+    <ClInclude Include="src\Renderer\shader.h" />
+    <ClInclude Include="src\Renderer\vertex-array.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -549,8 +551,10 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Renderer\buffer.cpp" />
+    <ClCompile Include="src\Renderer\shader.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Renderer\vertex-array.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
