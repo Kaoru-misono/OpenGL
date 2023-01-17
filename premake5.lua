@@ -15,6 +15,8 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "LearnOpenGL/vendor/GLFW/include"
 IncludeDir["Glad"] = "LearnOpenGL/vendor/Glad/include"
 IncludeDir["glm"] = "LearnOpenGL/vendor/glm"
+IncludeDir["stb_image"] = "LearnOpenGL/vendor/stb_image"
+
 
 include "LearnOpenGL/vendor/GLFW"
 include "LearnOpenGL/vendor/Glad"
@@ -34,7 +36,9 @@ project "LearnOpenGL"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp"
 	}
 
 	defines
@@ -47,7 +51,8 @@ project "LearnOpenGL"
 		"%{prj.name}/src",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links

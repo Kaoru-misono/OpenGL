@@ -130,7 +130,7 @@ int main()
 		float color_value = (sin(time_value) / 2.f) + 0.5f;
 		glm::vec4 color(0.0f, color_value, 0.0f, 1.0f);
 		triangle_shader.set_float4("u_Color", color);
-		//triangle_shader.set_float("u_Offset", 0.5f);
+		triangle_shader.set_float("u_time_factor", color_value);
 		
 
 		vertex_array->bind();
