@@ -39,6 +39,12 @@ void Shader::set_float4(const std::string& name, const glm::vec4 values)
 	glUniform4f(location, values.x, values.y, values.z, values.w);
 }
 
+void Shader::set_int(const std::string& name, int value)
+{
+	GLint location = glGetUniformLocation(m_render_ID, name.c_str());
+	glUniform1i(location, value);
+}
+
 std::string Shader::read_file(const std::string& FilePath)
 {
 	std::string ShaderSrc;
