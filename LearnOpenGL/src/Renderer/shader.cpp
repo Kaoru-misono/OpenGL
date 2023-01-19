@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const std::string& vertex_shader_path, const std::string fragment_shader_path)
 {
@@ -43,6 +44,12 @@ void Shader::set_int(const std::string& name, int value)
 {
 	GLint location = glGetUniformLocation(m_render_ID, name.c_str());
 	glUniform1i(location, value);
+}
+
+void Shader::set_mat4(const std::string& name, const glm::mat4 values)
+{
+	GLint location = glGetUniformLocation(m_render_ID, name.c_str());
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(values));
 }
 
 std::string Shader::read_file(const std::string& FilePath)

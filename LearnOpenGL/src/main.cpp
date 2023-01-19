@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
 #include "Renderer/shader.h"
@@ -105,19 +107,14 @@ int main()
 	//Vertex Array, Vertex Buffer, Index Buffer and shader
 	
 
-	std::shared_ptr<Vertex_Array> vertex_array = std::make_shared<Vertex_Array>();
 	std::shared_ptr<Vertex_Array> rectangle_vertex_array = std::make_shared<Vertex_Array>();
 
-	std::shared_ptr<Vertex_Buffer> vertex_buffer = std::make_shared<Vertex_Buffer>(vertices, sizeof(vertices));
-	std::shared_ptr<Vertex_Buffer> rectangle_vertex_buffer = std::make_shared<Vertex_Buffer>(rectangle_vertices, sizeof(rectangle_vertices));
-	vertex_buffer->set_layout(layout);
-	rectangle_vertex_buffer->set_layout(layout);
+	std::shared_ptr<Vertex_Buffer> vertex_buffer_first = std::make_shared<Vertex_Buffer>(rectangle_vertices, sizeof(rectangle_vertices));
+	vertex_buffer_first->set_layout(layout);
 
 	std::shared_ptr< Index_Buffer> index_buffer = std::make_shared<Index_Buffer>(indices, sizeof(indices)/sizeof(uint32_t));
 
-	vertex_array->add_vertex_buffer(vertex_buffer);
-	rectangle_vertex_array->add_vertex_buffer(rectangle_vertex_buffer);
-	//vertex_array->set_index_buffer(index_buffer);
+	rectangle_vertex_array->add_vertex_buffer(vertex_buffer_first);
 	rectangle_vertex_array->set_index_buffer(index_buffer);
 
 	//-----------------------texture-------------------------------------
@@ -166,6 +163,11 @@ int main()
 		std::cout << "Failed to load image!" << std::endl;
 	stbi_image_free(data);
 
+	
+	
+
+
+
 
 
 
@@ -184,6 +186,7 @@ int main()
 	triangle_shader.bind();
 	triangle_shader.set_int("texture1", 0);
 	triangle_shader.set_int("texture2", 1);
+
 	
 
 	//render loop
@@ -197,28 +200,44 @@ int main()
 		//ShaderProgram Use
 		triangle_shader.bind();
 
-		//Set Uniform
+		//calculate uniform
 		float time_value = (float)glfwGetTime();
 		float color_value = (sin(time_value) / 2.f) + 0.5f;
 		glm::vec4 color(0.0f, color_value, 0.0f, 1.0f);
+		//translate
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, time_value, glm::vec3(0.0f, 0.0f, 1.0f));
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+
+		//Set Uniform
+		
 		triangle_shader.set_float4("u_Color", color);
 		triangle_shader.set_float("u_time_factor", color_value);
+		triangle_shader.set_mat4("u_transform", trans);
+
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		
 		rectangle_vertex_array->bind();
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		//Draw second times
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		trans = glm::mat4(1.0f);
+		trans = glm::scale(trans, glm::vec3(sin(time_value) * 0.5 + 0.5));
+		triangle_shader.set_mat4("u_transform", trans);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 
 		//glfw: swap buffersand poll IO events(keys pressed / released, mouse moved etc.)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	vertex_array->unbind();
-	vertex_buffer->unbind();
+	
 	index_buffer->unbind();
 	triangle_shader.unbind();
 
