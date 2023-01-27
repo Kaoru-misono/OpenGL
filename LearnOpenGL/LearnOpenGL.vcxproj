@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer\buffer.h" />
+    <ClInclude Include="src\Renderer\camera.h" />
     <ClInclude Include="src\Renderer\shader.h" />
     <ClInclude Include="src\Renderer\vertex-array.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -553,6 +554,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer\buffer.cpp" />
+    <ClCompile Include="src\Renderer\camera.cpp" />
     <ClCompile Include="src\Renderer\shader.cpp" />
     <ClCompile Include="src\Renderer\vertex-array.cpp" />
     <ClCompile Include="src\main.cpp" />

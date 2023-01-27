@@ -10,18 +10,13 @@
 #include "Renderer/shader.h"
 #include "Renderer/buffer.h"
 #include "Renderer/vertex-array.h"
+#include "Renderer/camera.h"
 
 static bool first_mouse = true;
 static const unsigned int screen_width = 1600, screen_height = 1200;
 static float last_x = (float)screen_width / 2.0f, last_y = (float)screen_height / 2.0f;
 
-static float pitch = 0.0f;
-static float yaw = -90.0f;
-static float fov = 45.0f;
-
-static glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 3.0f);
-static glm::vec3 camera_front = glm::vec3(0.0f, 0.0f, -1.0f);
-static glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+Perspective_Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 //delta time
 static float delta_time = 0.0f;
@@ -47,34 +42,13 @@ void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
 	last_x = x_pos;
 	last_y = y_pos;
 
-	float sensitivity = 0.005f;
-	x_offset *= sensitivity;
-	y_offset *= sensitivity;
-
-	yaw   += x_offset;
-	pitch += y_offset;
-	//never make pitch >= 90.f 
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
-
-	glm::vec3 front;
-	front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	front.y = sin(glm::radians(pitch));
-	front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-	camera_front = glm::normalize(front);
+	camera.process_mouse_event(x_offset, y_offset);
 
 }
 
 void scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
 {
-	if (fov >= 1.0f && fov <= 45.0f)
-		fov -= y_offset;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 45.0f)
-		fov = 45.0f;
+	camera.process_scroll_event(static_cast<float>(y_offset));
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -85,15 +59,15 @@ void process_input(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 	//camera controller
-	float camera_speed = 2.5f * delta_time;
+	
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera_pos += camera_speed * glm::normalize(camera_front);
+		camera.process_key_event(FORWARD, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera_pos -= camera_speed * glm::normalize(camera_front);
+		camera.process_key_event(BACKWARD, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera_pos -= camera_speed * glm::normalize(glm::cross(camera_front, up));
+		camera.process_key_event(LEFT, delta_time);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera_pos += camera_speed * glm::normalize(glm::cross(camera_front, up));
+		camera.process_key_event(RIGHT, delta_time);
 
 }
 
@@ -388,12 +362,8 @@ int main()
 		
 
 
-		view = glm::lookAt(
-			camera_pos, //position
-			camera_pos + camera_front, //target
-			up //up
-		);
-		projection = glm::perspective(glm::radians(fov), (float)screen_width / (float)screen_height, 0.1f, 100.0f);
+		//std::cout << camera.get_euler().x << " " << camera.get_euler().y << std::endl;
+		
 
 
 		rectangle_vertex_array->bind();
@@ -403,8 +373,8 @@ int main()
 			model = glm::translate(model, cube_position[i]);
 			float angle = 20 * (i + 1);
 			model = glm::rotate(model, sin_factor * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			glm::mat4 mvp = projection * view * model;
-			triangle_shader.set_mat4("u_mvp", mvp);
+			glm::mat4 mvp = camera.get_view_projection_matrix() * model;
+			triangle_shader.set_mat4("u_mvp", mvp); 
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		
