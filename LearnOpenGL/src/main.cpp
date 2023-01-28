@@ -16,7 +16,7 @@ static bool first_mouse = true;
 static const unsigned int screen_width = 1600, screen_height = 1200;
 static float last_x = (float)screen_width / 2.0f, last_y = (float)screen_height / 2.0f;
 
-Perspective_Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Perspective_Camera camera(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(-20.0f, -80.0, 0.0f));
 
 //delta time
 static float delta_time = 0.0f;
@@ -217,12 +217,13 @@ int main()
 	//Vertex Array, Vertex Buffer, Index Buffer and shader
 	
 
+#if CHAPTER_ONE
 	std::shared_ptr<Vertex_Array> rectangle_vertex_array = std::make_shared<Vertex_Array>();
 
 	std::shared_ptr<Vertex_Buffer> vertex_buffer_first = std::make_shared<Vertex_Buffer>(box_vertices, sizeof(box_vertices));
 	vertex_buffer_first->set_layout(layout2);
 
-	std::shared_ptr< Index_Buffer> index_buffer = std::make_shared<Index_Buffer>(indices, sizeof(indices)/sizeof(uint32_t));
+	std::shared_ptr< Index_Buffer> index_buffer = std::make_shared<Index_Buffer>(indices, sizeof(indices) / sizeof(uint32_t));
 
 	rectangle_vertex_array->add_vertex_buffer(vertex_buffer_first);
 	//rectangle_vertex_array->set_index_buffer(index_buffer);
@@ -273,6 +274,27 @@ int main()
 		std::cout << "Failed to load image!" << std::endl;
 	stbi_image_free(data);
 
+	//Shader
+	Shader triangle_shader("Asset/Shader/triangle-vert.glsl", "Asset/Shader/triangle-frag.glsl");
+	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
+	// -------------------------------------------------------------------------------------------
+	triangle_shader.bind();
+	triangle_shader.set_int("texture1", 0);
+	triangle_shader.set_int("texture2", 1);
+#endif // CHAPTER_ONE
+
+
+	std::shared_ptr<Vertex_Array> box_VAO = std::make_shared<Vertex_Array>();
+	std::shared_ptr<Vertex_Buffer> box_VBO = std::make_shared<Vertex_Buffer>(box_vertices, sizeof(box_vertices));
+	box_VBO->set_layout(layout2);
+
+	box_VAO->add_vertex_buffer(box_VBO);
+
+	std::shared_ptr<Vertex_Array> light_VAO = std::make_shared<Vertex_Array>();
+	light_VAO->add_vertex_buffer(box_VBO);
+
+	
+
 	//create view matrix( = lookat() )
 	/*glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 3.0f);
 	glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -288,16 +310,22 @@ int main()
 	//MVP
 	//model
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(30.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	//view
 	glm::mat4 view = glm::mat4(1.0f);
 	//projection
 	glm::mat4 projection = glm::mat4(1.0f);
 
+	//light
+	glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
+	
+	//camera.set_euler(glm::vec3(10.0f, -90.0f, 0.0f));
 
 
-	//Shader
-	Shader triangle_shader("Asset/Shader/triangle-vert.glsl", "Asset/Shader/triangle-frag.glsl");
+
+	
+
+	Shader box_shader("Asset/Shader/box-vert.glsl", "Asset/Shader/box-frag.glsl");
+	Shader light_shader("Asset/Shader/light-vert.glsl", "Asset/Shader/light-frag.glsl");
 
 
 	// uncomment this call to draw in wireframe polygons.
@@ -307,11 +335,7 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-	triangle_shader.bind();
-	triangle_shader.set_int("texture1", 0);
-	triangle_shader.set_int("texture2", 1);
+	
 
 	
 
@@ -325,10 +349,38 @@ int main()
 
 		process_input(window);
 
-		glClearColor(0.2f, 0.8f, 0.5f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 mvp = glm::mat4(1.0f);
+		
+		
+
+		model = glm::mat4(1.0f);
+		mvp = camera.get_view_projection_matrix() * model;
+
+		box_shader.bind();
+		box_shader.set_float4("light_color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		box_shader.set_float4("object_color", glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+		box_shader.set_mat4("u_mvp", mvp);
+		box_VAO->bind();
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		light_VAO->bind();
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, light_pos);
+		model = glm::scale(model, glm::vec3(0.2f));
+		mvp = camera.get_view_projection_matrix() * model;
+		light_shader.bind();
+		light_shader.set_mat4("u_mvp", mvp);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+
+
+
+#if CHAPTER_ONE
 		//ShaderProgram Use
 		triangle_shader.bind();
 
@@ -345,25 +397,25 @@ int main()
 		//model = glm::rotate(model, glm::radians(0.5f), glm::vec3(0.5f, 1.0f, 0.0f));
 
 		//Set Uniform
-		
+
 		triangle_shader.set_float4("u_Color", color);
 		triangle_shader.set_float("u_time_factor", sin_factor);
-		
-		
+
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-		
+
 		float radius = 10.0f;
 		//camera_pos.x = cos(time_value) * radius; //x = r.sin(theta)
 		//camera_pos.z = sin(time_value) * radius; //z = r.cos(theta)
 		// camera_front = glm::vec3(0.0f, 0.0f, 0.0f) - camera_pos;
-		
+
 
 
 		//std::cout << camera.get_euler().x << " " << camera.get_euler().y << std::endl;
-		
+
 
 
 		rectangle_vertex_array->bind();
@@ -374,10 +426,10 @@ int main()
 			float angle = 20 * (i + 1);
 			model = glm::rotate(model, sin_factor * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			glm::mat4 mvp = camera.get_view_projection_matrix() * model;
-			triangle_shader.set_mat4("u_mvp", mvp); 
+			triangle_shader.set_mat4("u_mvp", mvp);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		
+
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		/*
 		//Draw second times
@@ -387,14 +439,14 @@ int main()
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		*/
 
+#endif
 		//glfw: swap buffersand poll IO events(keys pressed / released, mouse moved etc.)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
 	
-	index_buffer->unbind();
-	triangle_shader.unbind();
+	
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
    // ------------------------------------------------------------------

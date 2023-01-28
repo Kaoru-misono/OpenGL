@@ -568,6 +568,12 @@
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Asset\Shader\box-frag.glsl" />
+    <None Include="Asset\Shader\box-vert.glsl" />
+    <None Include="Asset\Shader\light-frag.glsl" />
+    <None Include="Asset\Shader\light-vert.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

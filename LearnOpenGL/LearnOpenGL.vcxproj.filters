@@ -1310,4 +1310,10 @@
     </ClCompile>
     <ClCompile Include="src\Renderer\camera.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Asset\Shader\box-vert.glsl" />
+    <None Include="Asset\Shader\box-frag.glsl" />
+    <None Include="Asset\Shader\light-frag.glsl" />
+    <None Include="Asset\Shader\light-vert.glsl" />
+  </ItemGroup>
 </Project>

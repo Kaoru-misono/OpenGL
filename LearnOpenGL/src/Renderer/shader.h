@@ -15,6 +15,7 @@ public:
 
 	//Set Uniform
 	void set_float(const std::string& name, float value);
+	void set_float3(const std::string& name, const glm::vec3 values);
 	void set_float4(const std::string& name, const glm::vec4 values);
 	void set_int(const std::string& name, int value);
 	void set_mat4(const std::string& name, const glm::mat4 values);
