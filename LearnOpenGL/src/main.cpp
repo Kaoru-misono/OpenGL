@@ -13,7 +13,7 @@
 #include "Renderer/camera.h"
 
 static bool first_mouse = true;
-static const unsigned int screen_width = 1600, screen_height = 1200;
+static const unsigned int screen_width = 800, screen_height = 600;
 static float last_x = (float)screen_width / 2.0f, last_y = (float)screen_height / 2.0f;
 
 Perspective_Camera camera(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(-20.0f, -80.0, 0.0f));
@@ -138,47 +138,47 @@ int main()
 	};
 	//Box vertices
 	float box_vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
 	//cube position
@@ -210,7 +210,7 @@ int main()
 	};
 	Buffer_Layout layout2 = {
 		{Shader_Data_Type::Float3, "a_Position"},
-		{Shader_Data_Type::Float2, "a_texcoord"}
+		{Shader_Data_Type::Float3, "a_normal"}
 	};
 
 	//What do we need to draw an object on screen?
@@ -315,8 +315,9 @@ int main()
 	//projection
 	glm::mat4 projection = glm::mat4(1.0f);
 
-	//light
-	glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
+	glm::mat4 mvp = glm::mat4(1.0f);
+
+	
 	
 	//camera.set_euler(glm::vec3(10.0f, -90.0f, 0.0f));
 
@@ -336,6 +337,7 @@ int main()
 
 
 	
+	
 
 	
 
@@ -353,18 +355,27 @@ int main()
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 mvp = glm::mat4(1.0f);
 		
 		
+		
+		float time_value = (float)glfwGetTime();
+		
 
-		model = glm::mat4(1.0f);
-		mvp = camera.get_view_projection_matrix() * model;
-
-		box_shader.bind();
-		box_shader.set_float4("light_color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		box_shader.set_float4("object_color", glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
-		box_shader.set_mat4("u_mvp", mvp);
 		box_VAO->bind();
+		glm::vec3 light_pos(sin(time_value), sin(time_value), cos(time_value));
+		model = glm::mat4(1.0f);
+		glm::mat4 normal_matrix = glm::transpose(glm::inverse(model));
+		mvp = camera.get_view_projection_matrix() * model;
+		box_shader.bind();
+		box_shader.set_float3("light_color", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_float3("object_color", glm::vec3(1.0f, 0.5f, 0.31f));
+		box_shader.set_mat4("u_mvp", mvp);
+		box_shader.set_mat4("u_model", model);
+		box_shader.set_mat4("u_normal_matrix", normal_matrix);
+		box_shader.set_float3("light_pos", light_pos);
+		box_shader.set_float3("view_pos", camera.get_position());
+
+		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		light_VAO->bind();
@@ -374,6 +385,7 @@ int main()
 		mvp = camera.get_view_projection_matrix() * model;
 		light_shader.bind();
 		light_shader.set_mat4("u_mvp", mvp);
+
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
