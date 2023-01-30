@@ -16,7 +16,7 @@ static bool first_mouse = true;
 static const unsigned int screen_width = 800, screen_height = 600;
 static float last_x = (float)screen_width / 2.0f, last_y = (float)screen_height / 2.0f;
 
-Perspective_Camera camera(glm::vec3(0.0f, 2.0f, 5.0f), glm::vec3(-20.0f, -80.0, 0.0f));
+Perspective_Camera camera(glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(-20.0f, -110.0, 0.0f));
 
 //delta time
 static float delta_time = 0.0f;
@@ -322,7 +322,7 @@ int main()
 	//camera.set_euler(glm::vec3(10.0f, -90.0f, 0.0f));
 
 
-
+	
 	
 
 	Shader box_shader("Asset/Shader/box-vert.glsl", "Asset/Shader/box-frag.glsl");
@@ -359,21 +359,38 @@ int main()
 		
 		
 		float time_value = (float)glfwGetTime();
+		//light
+		glm::vec3 light_pos = glm::vec3(1.2f, 1.0f, 2.0f);
+		glm::vec3 light_color;
+		light_color.x = sin(time_value * 0.7f);
+		light_color.y = sin(time_value * 0.5f);
+		light_color.z = sin(time_value * 0.3f);
+
+		glm::vec3 diffuse_color = light_color * 0.5f;
+		glm::vec3 ambient_color = diffuse_color * 0.2f;
 		
 
 		box_VAO->bind();
-		glm::vec3 light_pos(sin(time_value), sin(time_value), cos(time_value));
+		//glm::vec3 light_pos(sin(2 * time_value), sin(2 * time_value), cos(2 * time_value));
 		model = glm::mat4(1.0f);
 		glm::mat4 normal_matrix = glm::transpose(glm::inverse(model));
 		mvp = camera.get_view_projection_matrix() * model;
 		box_shader.bind();
-		box_shader.set_float3("light_color", glm::vec3(1.0f, 1.0f, 1.0f));
-		box_shader.set_float3("object_color", glm::vec3(1.0f, 0.5f, 0.31f));
+
+		box_shader.set_vec3("light.position", light_pos);
+		box_shader.set_vec3("light.ambient", ambient_color);
+		box_shader.set_vec3("light.diffuse", diffuse_color);
+		box_shader.set_vec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
 		box_shader.set_mat4("u_mvp", mvp);
 		box_shader.set_mat4("u_model", model);
 		box_shader.set_mat4("u_normal_matrix", normal_matrix);
-		box_shader.set_float3("light_pos", light_pos);
-		box_shader.set_float3("view_pos", camera.get_position());
+		box_shader.set_vec3("view_pos", camera.get_position());
+
+		box_shader.set_vec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
+		box_shader.set_vec3("material.diffuse", glm::vec3(0.0f, 0.50980392f, 0.50980392f));
+		box_shader.set_vec3("material.specular", glm::vec3(0.50196078, 0.50980392f, 0.50980392f));
+		box_shader.set_float("material.shininess", 35.0f);
 
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -385,6 +402,9 @@ int main()
 		mvp = camera.get_view_projection_matrix() * model;
 		light_shader.bind();
 		light_shader.set_mat4("u_mvp", mvp);
+
+		light_shader.set_vec3("light_color", light_color);
+		
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -410,7 +430,7 @@ int main()
 
 		//Set Uniform
 
-		triangle_shader.set_float4("u_Color", color);
+		triangle_shader.set_vec4("u_Color", color);
 		triangle_shader.set_float("u_time_factor", sin_factor);
 
 
