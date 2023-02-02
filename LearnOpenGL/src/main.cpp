@@ -22,54 +22,13 @@ Perspective_Camera camera(glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(-20.0f, -110.0,
 static float delta_time = 0.0f;
 static float last_frame = 0.0f;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
-}
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double x_pos, double y_pos);
+void scroll_callback(GLFWwindow* window, double x_offset, double y_offset);
+void process_input(GLFWwindow* window);
+unsigned int load_texture(const std::string& path);
 
-void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
-{
-	if (first_mouse)
-	{
-		last_x = x_pos;
-		last_y = y_pos;
-		first_mouse = false;
-	}
-	float x_offset = x_pos - last_x;
-	float y_offset = last_y - y_pos;
-	last_x = x_pos;
-	last_y = y_pos;
 
-	camera.process_mouse_event(x_offset, y_offset);
-
-}
-
-void scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
-{
-	camera.process_scroll_event(static_cast<float>(y_offset));
-}
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void process_input(GLFWwindow* window)
-{
-	//close
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-	//camera controller
-	
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.process_key_event(FORWARD, delta_time);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.process_key_event(BACKWARD, delta_time);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.process_key_event(LEFT, delta_time);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.process_key_event(RIGHT, delta_time);
-
-}
 
 int main()
 {
@@ -138,47 +97,48 @@ int main()
 	};
 	//Box vertices
 	float box_vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	// positions          // normals           // texture coords
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 	};
 
 	//cube position
@@ -210,7 +170,8 @@ int main()
 	};
 	Buffer_Layout layout2 = {
 		{Shader_Data_Type::Float3, "a_Position"},
-		{Shader_Data_Type::Float3, "a_normal"}
+		{Shader_Data_Type::Float3, "a_normal"},
+		{Shader_Data_Type::Float2, "a_texcoord"}
 	};
 
 	//What do we need to draw an object on screen?
@@ -335,7 +296,10 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
+	//texture
+	unsigned int diffuse_map = load_texture("Asset/texture/container2_diffuse.png");
+	unsigned int specular_map = load_texture("Asset/texture/lighting_maps_specular_color.png");
+	unsigned int emission_map = load_texture("Asset/texture/matrix.jpg");
 	
 	
 
@@ -361,17 +325,17 @@ int main()
 		float time_value = (float)glfwGetTime();
 		//light
 		glm::vec3 light_pos = glm::vec3(1.2f, 1.0f, 2.0f);
-		glm::vec3 light_color;
-		light_color.x = sin(time_value * 0.7f);
+		glm::vec3 light_color(1.0f);
+		/*light_color.x = sin(time_value * 0.7f);
 		light_color.y = sin(time_value * 0.5f);
-		light_color.z = sin(time_value * 0.3f);
+		light_color.z = sin(time_value * 0.3f);*/
 
 		glm::vec3 diffuse_color = light_color * 0.5f;
 		glm::vec3 ambient_color = diffuse_color * 0.2f;
 		
 
 		box_VAO->bind();
-		//glm::vec3 light_pos(sin(2 * time_value), sin(2 * time_value), cos(2 * time_value));
+		light_pos = glm::vec3(sin(time_value), 0.0f, cos(time_value));
 		model = glm::mat4(1.0f);
 		glm::mat4 normal_matrix = glm::transpose(glm::inverse(model));
 		mvp = camera.get_view_projection_matrix() * model;
@@ -387,10 +351,23 @@ int main()
 		box_shader.set_mat4("u_normal_matrix", normal_matrix);
 		box_shader.set_vec3("view_pos", camera.get_position());
 
-		box_shader.set_vec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
-		box_shader.set_vec3("material.diffuse", glm::vec3(0.0f, 0.50980392f, 0.50980392f));
-		box_shader.set_vec3("material.specular", glm::vec3(0.50196078, 0.50980392f, 0.50980392f));
+		//box_shader.set_vec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
+		//box_shader.set_vec3("material.diffuse", glm::vec3(0.7f, 0.7f, 0.7f));
+		//box_shader.set_vec3("material.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 		box_shader.set_float("material.shininess", 35.0f);
+
+		box_shader.set_int("material.diffuse", 0);
+		box_shader.set_int("material.specular", 1);
+		box_shader.set_int("material.emission", 2);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, diffuse_map);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specular_map); 
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, emission_map);
+
+
 
 		
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -485,4 +462,88 @@ int main()
 	glfwTerminate();
 	return 0;
 
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
+}
+
+void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
+{
+	if (first_mouse)
+	{
+		last_x = x_pos;
+		last_y = y_pos;
+		first_mouse = false;
+	}
+	float x_offset = x_pos - last_x;
+	float y_offset = last_y - y_pos;
+	last_x = x_pos;
+	last_y = y_pos;
+
+	camera.process_mouse_event(x_offset, y_offset);
+
+}
+
+void scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
+{
+	camera.process_scroll_event(static_cast<float>(y_offset));
+}
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void process_input(GLFWwindow* window)
+{
+	//close
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+	//camera controller
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.process_key_event(FORWARD, delta_time);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.process_key_event(BACKWARD, delta_time);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.process_key_event(LEFT, delta_time);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.process_key_event(RIGHT, delta_time);
+
+}
+
+unsigned int load_texture(const std::string& path)
+{
+	unsigned int render_ID;
+	glGenTextures(1, &render_ID);
+	glBindTexture(GL_TEXTURE_2D, render_ID);
+	//GL_REPEAT GL_MIRRORED_REPEAT GL_CLAMP_TO_EDGE GL_CLAMP_TO_BORDER
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	
+	//GL_LINEAR GL_NEAREST
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//load image
+	int width, height, channels;
+	stbi_set_flip_vertically_on_load(1);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+	GLenum format;
+	if (channels == 1) format = GL_RED;
+	if (channels == 3) format = GL_RGB;
+	if (channels == 4) format = GL_RGBA;
+
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+		std::cout << "Failed to load image from : " << path << std::endl;
+	stbi_image_free(data);
+	return render_ID;
 }

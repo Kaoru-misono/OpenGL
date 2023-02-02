@@ -6,7 +6,7 @@
 class Shader
 {
 public:
-	Shader(const std::string& VertexShaderPath, const std::string FragmentShaderPath);
+	Shader(const std::string& VertexShaderPath, const std::string& FragmentShaderPath);
 	~Shader();
 
 	//use Program

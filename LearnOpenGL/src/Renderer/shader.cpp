@@ -4,7 +4,7 @@
 #include <vector>
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader(const std::string& vertex_shader_path, const std::string fragment_shader_path)
+Shader::Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
 {
 	unsigned int shader_program = glCreateProgram();
 	m_render_ID = shader_program;
