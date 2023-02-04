@@ -25,6 +25,7 @@ public:
 	const glm::mat4 get_view_matrix() const { return m_view_matrix; }
 	const glm::mat4 get_view_projection_matrix() const { return m_view_projection_matrix; }
 	const glm::vec3 get_position() const { return m_position; }
+	const glm::vec3 get_front() const { return m_front; }
 	const glm::vec3 get_euler() const { return m_euler; }
 
 private:

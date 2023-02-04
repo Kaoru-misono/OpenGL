@@ -355,6 +355,14 @@ int main()
 		box_shader.set_vec3("p_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 		box_shader.set_vec3("p_light.attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
 
+		box_shader.set_vec3("s_light.position", camera.get_position());
+		box_shader.set_vec3("s_light.direction", camera.get_front());
+		box_shader.set_float("s_light.in_cut_off", glm::cos(glm::radians(12.5f)));
+		box_shader.set_float("s_light.out_cut_off", glm::cos(glm::radians(17.5f)));
+		box_shader.set_vec3("s_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		box_shader.set_vec3("s_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		box_shader.set_vec3("s_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
 
 		
 		//box_shader.set_vec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
