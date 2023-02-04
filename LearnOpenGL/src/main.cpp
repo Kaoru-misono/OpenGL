@@ -298,10 +298,15 @@ int main()
 
 	//texture
 	unsigned int diffuse_map = load_texture("Asset/texture/container2_diffuse.png");
-	unsigned int specular_map = load_texture("Asset/texture/lighting_maps_specular_color.png");
+	unsigned int specular_map = load_texture("Asset/texture/container2_specular.png");
 	unsigned int emission_map = load_texture("Asset/texture/matrix.jpg");
 	
-	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, diffuse_map);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specular_map);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, emission_map);
 
 	
 
@@ -315,7 +320,7 @@ int main()
 
 		process_input(window);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -325,6 +330,7 @@ int main()
 		float time_value = (float)glfwGetTime();
 		//light
 		glm::vec3 light_pos = glm::vec3(1.2f, 1.0f, 2.0f);
+		//light_pos = glm::vec3(sin(time_value), 0.0f, cos(time_value));
 		glm::vec3 light_color(1.0f);
 		/*light_color.x = sin(time_value * 0.7f);
 		light_color.y = sin(time_value * 0.5f);
@@ -335,22 +341,22 @@ int main()
 		
 
 		box_VAO->bind();
-		light_pos = glm::vec3(sin(time_value), 0.0f, cos(time_value));
-		model = glm::mat4(1.0f);
-		glm::mat4 normal_matrix = glm::transpose(glm::inverse(model));
-		mvp = camera.get_view_projection_matrix() * model;
+		
 		box_shader.bind();
 
-		box_shader.set_vec3("light.position", light_pos);
-		box_shader.set_vec3("light.ambient", ambient_color);
-		box_shader.set_vec3("light.diffuse", diffuse_color);
-		box_shader.set_vec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_vec3("d_light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		box_shader.set_vec3("d_light.ambient", ambient_color);
+		box_shader.set_vec3("d_light.diffuse", diffuse_color);
+		box_shader.set_vec3("d_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-		box_shader.set_mat4("u_mvp", mvp);
-		box_shader.set_mat4("u_model", model);
-		box_shader.set_mat4("u_normal_matrix", normal_matrix);
-		box_shader.set_vec3("view_pos", camera.get_position());
+		box_shader.set_vec3("p_light.position", light_pos);
+		box_shader.set_vec3("p_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		box_shader.set_vec3("p_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		box_shader.set_vec3("p_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_vec3("p_light.attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
 
+
+		
 		//box_shader.set_vec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
 		//box_shader.set_vec3("material.diffuse", glm::vec3(0.7f, 0.7f, 0.7f));
 		//box_shader.set_vec3("material.specular", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -360,17 +366,26 @@ int main()
 		box_shader.set_int("material.specular", 1);
 		box_shader.set_int("material.emission", 2);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuse_map);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specular_map); 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, emission_map);
+		for (int i = 0; i < 10; i++)
+		{
+			model = glm::translate(glm::mat4(1.0f), cube_position[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			mvp = camera.get_view_projection_matrix() * model;
+			glm::mat4 normal_matrix = glm::transpose(glm::inverse(model));
+
+			box_shader.set_mat4("u_mvp", mvp);
+			box_shader.set_mat4("u_model", model);
+			box_shader.set_mat4("u_normal_matrix", normal_matrix);
+			box_shader.set_vec3("view_pos", camera.get_position());
+
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 
 
 		
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+	
 
 		light_VAO->bind();
 		model = glm::mat4(1.0f);
@@ -475,8 +490,8 @@ void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
 {
 	if (first_mouse)
 	{
-		last_x = x_pos;
-		last_y = y_pos;
+		last_x = (float)x_pos;
+		last_y = (float)y_pos;
 		first_mouse = false;
 	}
 	float x_offset = x_pos - last_x;
@@ -532,10 +547,10 @@ unsigned int load_texture(const std::string& path)
 	int width, height, channels;
 	stbi_set_flip_vertically_on_load(1);
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-	GLenum format;
+	GLenum format = 0;
 	if (channels == 1) format = GL_RED;
-	if (channels == 3) format = GL_RGB;
-	if (channels == 4) format = GL_RGBA;
+	else if (channels == 3) format = GL_RGB;
+	else if (channels == 4) format = GL_RGBA;
 
 	if (data)
 	{
