@@ -156,6 +156,14 @@ int main()
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	//light position
+	glm::vec3 point_light_positions[] = {
+	glm::vec3(0.7f,  0.2f,  2.0f),
+	glm::vec3(2.3f, -3.3f, -4.0f),
+	glm::vec3(-4.0f,  2.0f, -12.0f),
+	glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
 	//Array of indices
 	unsigned int indices[] = 
 	{ 
@@ -349,11 +357,29 @@ int main()
 		box_shader.set_vec3("d_light.diffuse", diffuse_color);
 		box_shader.set_vec3("d_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-		box_shader.set_vec3("p_light.position", light_pos);
-		box_shader.set_vec3("p_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		box_shader.set_vec3("p_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-		box_shader.set_vec3("p_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-		box_shader.set_vec3("p_light.attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
+		box_shader.set_vec3("p_lights[0].position", point_light_positions[0]);
+		box_shader.set_vec3("p_lights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		box_shader.set_vec3("p_lights[0].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		box_shader.set_vec3("p_lights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_vec3("p_lights[0].attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
+
+		box_shader.set_vec3("p_lights[1].position", point_light_positions[1]);
+		box_shader.set_vec3("p_lights[1].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		box_shader.set_vec3("p_lights[1].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		box_shader.set_vec3("p_lights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_vec3("p_lights[1].attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
+
+		box_shader.set_vec3("p_lights[2].position", point_light_positions[2]);
+		box_shader.set_vec3("p_lights[2].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		box_shader.set_vec3("p_lights[2].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		box_shader.set_vec3("p_lights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_vec3("p_lights[2].attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
+
+		box_shader.set_vec3("p_lights[3].position", point_light_positions[3]);
+		box_shader.set_vec3("p_lights[3].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		box_shader.set_vec3("p_lights[3].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		box_shader.set_vec3("p_lights[3].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		box_shader.set_vec3("p_lights[3].attenuation_factor", glm::vec3(1.0f, 0.09f, 0.032f));
 
 		box_shader.set_vec3("s_light.position", camera.get_position());
 		box_shader.set_vec3("s_light.direction", camera.get_front());
@@ -396,18 +422,19 @@ int main()
 	
 
 		light_VAO->bind();
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, light_pos);
-		model = glm::scale(model, glm::vec3(0.2f));
-		mvp = camera.get_view_projection_matrix() * model;
-		light_shader.bind();
-		light_shader.set_mat4("u_mvp", mvp);
+		for (int i = 0; i < 4; i++)
+		{
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, point_light_positions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
+			mvp = camera.get_view_projection_matrix() * model;
+			light_shader.bind();
+			light_shader.set_mat4("u_mvp", mvp);
 
-		light_shader.set_vec3("light_color", light_color);
-		
+			light_shader.set_vec3("light_color", light_color);
 
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 
 
