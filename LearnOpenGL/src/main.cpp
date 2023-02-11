@@ -6,6 +6,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "Renderer/shader.h"
 #include "Renderer/buffer.h"
@@ -274,6 +277,19 @@ int main()
 
 	
 
+	{
+		// read file via ASSIMP
+		Assimp::Importer importer;
+		const aiScene* scene = importer.ReadFile("Asset/model/nanosuit.obj", aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+		// check for errors
+		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+		{
+			std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+			return -1;
+		}
+		std::cout << "ASSIMP LOAD SUCCESSFUL!" << std::endl;
+		
+	}
 
 
 	//MVP

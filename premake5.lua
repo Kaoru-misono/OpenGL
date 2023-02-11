@@ -16,10 +16,14 @@ IncludeDir["GLFW"] = "LearnOpenGL/vendor/GLFW/include"
 IncludeDir["Glad"] = "LearnOpenGL/vendor/Glad/include"
 IncludeDir["glm"] = "LearnOpenGL/vendor/glm"
 IncludeDir["stb_image"] = "LearnOpenGL/vendor/stb_image"
+IncludeDir["assimp"] = "LearnOpenGL/vendor/assimp/include"
+
 
 
 include "LearnOpenGL/vendor/GLFW"
 include "LearnOpenGL/vendor/Glad"
+include "LearnOpenGL/vendor/assimp"
+
 
 project "LearnOpenGL"
 	location "LearnOpenGL"
@@ -52,14 +56,18 @@ project "LearnOpenGL"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.assimp}"
+
 	}
 
 	links
 	{
 		"GLFW",
 		"Glad",
+		"assimp",
 		"opengl32.lib"
+		
 	}
 
 	filter "system:windows"

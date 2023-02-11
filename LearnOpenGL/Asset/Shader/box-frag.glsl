@@ -111,8 +111,8 @@ void main()
 	
 	vec3 color = vec3(0.0);
 	color += calculate_dir_light(d_light, normal, view_dir);
-	//for(int i = 0; i < POINT_LIGHTS_NUM; i++)
-	//color += calculate_point_light(p_lights[i], normal, v_world_pos, view_dir);
+	for(int i = 0; i < POINT_LIGHTS_NUM; i++)
+	color += calculate_point_light(p_lights[i], normal, v_world_pos, view_dir);
 	color += calculate_spot_light(s_light, normal, v_world_pos, view_dir);
 	//if (emission_color != vec3(0.0)) color = emission_color;
 	frag_color = vec4(color, 1.0);
