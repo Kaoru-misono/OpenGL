@@ -27,6 +27,7 @@ public:
 	const glm::vec3 get_position() const { return m_position; }
 	const glm::vec3 get_front() const { return m_front; }
 	const glm::vec3 get_euler() const { return m_euler; }
+	const float get_zoom() const { return m_fov; }
 
 private:
 	void update_view_matrix();

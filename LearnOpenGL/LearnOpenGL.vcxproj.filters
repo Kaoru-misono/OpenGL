@@ -1293,6 +1293,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\model.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Renderer\buffer.cpp">
@@ -1313,5 +1314,17 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\mesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\chapter1.txt">
+      <Filter>src</Filter>
+    </Text>
+    <Text Include="src\depth-test.txt">
+      <Filter>src</Filter>
+    </Text>
+    <Text Include="src\stencil.txt">
+      <Filter>src</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -20,6 +20,8 @@ public:
 	void set_int(const std::string& name, int value);
 	void set_mat4(const std::string& name, const glm::mat4 values);
 
+	GLint ID()const { return m_render_ID; }
+
 
 
 private:

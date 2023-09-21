@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="src\Renderer\buffer.h" />
     <ClInclude Include="src\Renderer\camera.h" />
+    <ClInclude Include="src\Renderer\model.h" />
     <ClInclude Include="src\Renderer\shader.h" />
     <ClInclude Include="src\Renderer\vertex-array.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -555,6 +556,7 @@
   <ItemGroup>
     <ClCompile Include="src\Renderer\buffer.cpp" />
     <ClCompile Include="src\Renderer\camera.cpp" />
+    <ClCompile Include="src\Renderer\mesh.h" />
     <ClCompile Include="src\Renderer\shader.cpp" />
     <ClCompile Include="src\Renderer\vertex-array.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -570,6 +572,11 @@
     <ProjectReference Include="vendor\assimp\assimp.vcxproj">
       <Project>{724885F2-5EEA-AFC8-47A5-C31C33E63619}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\chapter1.txt" />
+    <Text Include="src\depth-test.txt" />
+    <Text Include="src\stencil.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

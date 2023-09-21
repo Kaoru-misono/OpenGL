@@ -1,7 +1,7 @@
 #include "camera.h"
 
 Perspective_Camera::Perspective_Camera(glm::vec3 position, glm::vec3 euler, glm::vec3 up, float fov)
-	:m_position(position), m_world_up(up), m_fov(fov), m_euler(euler), m_camera_speed(2.5f), m_mouse_sensitivity(0.01f)
+	:m_position(position), m_world_up(up), m_fov(fov), m_euler(euler), m_camera_speed(2.5f), m_mouse_sensitivity(0.1f)
 {
 	m_zoom = m_fov;
 
